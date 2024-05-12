@@ -96,7 +96,7 @@ Similarly, the way of training the medical image fusion is simple, referring to 
 # Infrared and visible fusion
 CUDA_VISIBLE_DEVICES=0 python train.py  --config config/diff-if-ivf.json
 
-# medical image fusion
+# Medical image fusion
 CUDA_VISIBLE_DEVICES=0 python train.py  --config config/diff-if-mif.json
 ```
  

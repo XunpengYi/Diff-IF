@@ -1,0 +1,76 @@
+{
+    "name": "Diff-IF-mif-train",
+    "phase": "train", // train or val
+    "gpu_ids": [
+        0
+    ],
+    "path": { //set the path
+        "log": "logs",
+        "tb_logger": "tb_logger",
+        "results": "results",
+        "checkpoint": "checkpoint",
+        "resume_state":  null
+    },
+    "datasets": {
+        "train": {
+            "dataset": "Harvard",
+            "name": "train",
+            "dataroot": "dataset/Harvard_FK/train",
+            "batch_size": 16,
+            "num_workers": 16,
+            "use_shuffle": true,
+            "data_len": -1
+        },
+        "val": {
+            "dataset": "Test_mif",
+            "name": "val",
+            "dataroot": "dataset/Harvard_FK/eval",
+            "data_len": -1
+        }
+    },
+    "model": {
+        "which_model_G": "diffif",
+        "finetune_norm": false,
+        "unet_denoising": {
+            "in_channel": 3,
+            "out_channel": 1,
+            "inner_channel": 48,
+            "channel_multiplier": [1, 2, 4, 6],
+            "attn_res": [16],
+            "res_blocks": 2,
+            "dropout": 0.1
+        },
+        "unet_refine": {
+            "in_channel": 1,
+            "out_channel": 1
+        },
+        "beta_schedule": { // use munual beta_schedule for acceleration
+            "train": {
+                "schedule": "linear",
+                "n_timestep": 1000,
+                "linear_start": 1e-6,
+                "linear_end": 1e-2
+            },
+            "val": {
+                "schedule": "linear",
+                "n_timestep": 1000,
+                "linear_start": 1e-6,
+                "linear_end": 1e-2
+            }
+        },
+        "diffusion": {
+            "channels": 3,
+            "conditional": true
+        }
+    },
+    "train": {
+        "n_iter": 16000,
+        "val_freq": 2e3,
+        "save_checkpoint_freq": 2e3,
+        "print_freq": 100,
+        "optimizer": {
+            "type": "adam",
+            "lr": 1e-4  // This version doesn't have Learning Rate Modulator. Add it by yourself.
+        }
+    }
+}

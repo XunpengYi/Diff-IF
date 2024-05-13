@@ -247,67 +247,6 @@ class Evaluator():
         return mssim, ssim_map, sigma1_sq, sigma2_sq
 
     @classmethod
-    def Qe(cls, fuse, img1, img2):
-        ssim, ssim_map, sigma1_sq, sigma2_sq = cls.ssim_index(img1, img2)
-
-        buffer = sigma1_sq + sigma2_sq
-        test = (buffer == 0)
-        test = test * 0.5
-        sigma1_sq += test
-        sigma2_sq += test
-
-        buffer = sigma1_sq + sigma2_sq
-        ramda = sigma1_sq / buffer
-
-        ssim1, ssim_map1, _, _ = cls.ssim_index(fuse, img1)
-        ssim2, ssim_map2, _, _ = cls.ssim_index(fuse, img2)
-
-        # This is the implementation of Qe
-        buffer = np.stack((sigma1_sq, sigma2_sq), axis=2)
-        Cw = np.max(buffer, axis=2)
-        cw = Cw / np.sum(np.sum(Cw))
-        Qw_origin = np.sum(np.sum(cw * (ramda * ssim_map1 + (1 - ramda) * ssim_map2)))
-
-        flt1 = np.array([[1, 0, -1], [1, 0, -1], [1, 0, -1]])
-        flt2 = np.array([[1, 1, 1], [0, 0, 0], [-1, -1, -1]])
-
-        fuseX = convolve2d(fuse, flt1, mode='same')
-        fuseY = convolve2d(fuse, flt2, mode='same')
-        fuseF = np.sqrt(fuseX ** 2 + fuseY ** 2)
-
-        img1X = convolve2d(img1, flt1, mode='same')
-        img1Y = convolve2d(img1, flt2, mode='same')
-        img1F = np.sqrt(img1X ** 2 + img1Y ** 2)
-
-        img2X = convolve2d(img2, flt1, mode='same')
-        img2Y = convolve2d(img2, flt2, mode='same')
-        img2F = np.sqrt(img2X ** 2 + img2Y ** 2)
-
-        ssim, ssim_map, sigma1_sq, sigma2_sq = cls.ssim_index(img1F, img2F)
-
-        buffer = sigma1_sq + sigma2_sq
-        test = (buffer == 0)
-        test = test * 0.5
-        sigma1_sq += test
-        sigma2_sq += test
-
-        buffer = sigma1_sq + sigma2_sq
-        ramda = sigma1_sq / buffer
-
-        ssim1, ssim_map1, _, _ = cls.ssim_index(fuseF, img1F)
-        ssim2, ssim_map2, _, _ = cls.ssim_index(fuseF, img2F)
-
-        buffer = np.stack((sigma1_sq, sigma2_sq), axis=2)
-        Cw = np.max(buffer, axis=2)
-        cw = Cw / np.sum(np.sum(Cw))
-        Qw = np.sum(np.sum(cw * (ramda * ssim_map1 + (1 - ramda) * ssim_map2)))
-
-        alpha = 1
-        Qe = Qw_origin * Qw ** alpha
-
-        return Qe
-
-    @classmethod
     def Qabf_getArray(cls,img):
         # Sobel Operator Sobel
         h1 = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]]).astype(np.float32)

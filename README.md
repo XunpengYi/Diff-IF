@@ -9,7 +9,7 @@ Information Fusion (2024): 102450.**
 ## 1. Create Environment
 - Create Conda Environment
 ```
-conda create -n diffif_env python=3.8
+conda create -n diffif_env python=3.9
 conda activate diffif_env
 ```
 - Install Dependencies
@@ -17,6 +17,7 @@ conda activate diffif_env
 conda install pytorch==2.0.0 torchvision==0.15.0 pytorch-cuda=11.8 -c pytorch -c nvidia
 pip install -r requirements.txt
 ```
+We strongly recommend the configurations in the requirements.txt, for some old versions of dependencies may not support some new functions.
 
 ## 2. Prepare Your Dataset
 
